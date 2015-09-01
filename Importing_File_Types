@@ -1,0 +1,21 @@
+IDhousingData<-read.csv("/Users/KATE/downloads/getdata-data-ss06hid.csv")
+IDhousingdf<-as.data.frame(IDhousingData)
+properties<- IDhousingdf[IDhousingdf$VAL==24,]
+properties
+
+library(xlsx)
+dat<-read.xlsx("/Users/KATE/downloads/getdata-data-DATA.gov_NGAP.xlsx, sheetIndex=1, rowIndex=c(18:23), colIndex=C(7:15))
+answer<-sum(dat$Zip*dat$Ext, na.rm=T)
+class(doc)
+rootNode<-xmlRoot(doc)
+xmlName(rootNode)
+ZipCode<- xpathSApply(doc, "//0li[@class='zipcode'], xmlValue)
+class(doc)
+
+IDhousingData<-read.csv("/Users/KATE/downloads/getdata-data-ss06hid.csv")
+DT<- as.data.table(IDhousingData)
+
+answer<-mean(DT$pwgtp15, by=DT$SEX)
+answer
+
+library(sqldf)
