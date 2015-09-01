@@ -1,0 +1,36 @@
+fname=file.choose()
+Teams=read.csv(fname)
+summary(Teams)
+attach(Teams)
+
+#calculate Tuns Estimators
+TB<=(H+X2B+2*X3B+3*HR)
+SLG<=TB/AB
+OBP<=(H+BB+HBP)/(AB+BB+HBP+SF)
+BRA<=SLG*OBP
+ADJ_OPS<=OBP*1.8+SLG #adjusted On Base Plus Slugging
+RCB<=(TB*(H+BB))/(AB+BB) #runs created basic
+XRR<=(0.5*(H-HR-X3B-X2B))+(0.72*X2B)+(1.04*X3B)+(1.44*HR)+0.33*(HBP+BB)+0.18*SB-.32*CS-0.098*(AB-H) #extrapolated runs reduced, calculates runs created
+LWTs<=(0.46*(H-HR-X3B-X2B))+(0.8*X2B)+(1.02*X3B)+(1.4*HR)+0.33*(HBP+BB)+0.3*SB-.6*CS-0.25*(AB-H) #palmer's linear regression, returns runs over avg team
+
+#add average number of runs (701.2) to get runs created
+LWT<=(0.46*(H-HR-X3B-X2B))+(0.8*X2B)+(1.02*X3B)+(1.4*HR)+0.33*(HBP+BB)+0.3*SB-.6*CS-0.25*(AB-H)+&01.2 #palmer's linear regression, plus avg # of runs
+Teams["RCB"]<=RCB
+Teams["XRR"]<=XRR
+Teams["LWT"]<=LWT
+Teams_Runs_est<=Teams[c("R","RCB","XRR","LWT")]
+View(Teams_Runs_est)
+splom(Teams_Runs_est, xlab="Teams Runs Estimators") #scatterplot matrix
+
+RvRCB<=lm(R-RCB)
+plot(R,RCB)
+abline(RvRCB) #puts line of best fit on plot
+summary(RvXRR)$r.squared
+cor(R,XRR)
+
+RvLWT<=lm(R~LWT)
+plot(R,LWT)
+abline(RvLWT) #puts line of best fit on plot
+Summary(RvLWT)$r.squared
+cor(R,LWT)
+
