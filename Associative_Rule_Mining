@@ -1,0 +1,14 @@
+#Associative Rule Mining With R
+load("/Users/KATE/Downloads/titanic.raw/rdata")
+dim(titanic.raw)
+idx<-sample(1:nrow(titanic.raw), 8)
+titanic.raw[idx,] #sample 8 passengers
+library(arules)
+rules<-apriori(titanic.raw, control=list(verbose=F), parameter=list(minlen=2, supp=0.005, con=0.8),
+apperance=list(rhs=c("survived=No", "Survived=Yes"), default="lhs"))
+#calculates effect of variables on survival, support=0.005, confidence interval=0.8
+#display variables on left, survival outcomes on right
+quality(rules)<-round(quality(rules), digits=3) #round numbers to three decimals
+rules.sorted<-sort(rules, by="lift") #sort by lift
+library(arulesViz)
+plot(rules, method="graph") #graph of relationship and relative percentages
