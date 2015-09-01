@@ -1,0 +1,26 @@
+load("~/Downloads/rdmTweets-201306.RData")
+n.tweet<-length(tweets)
+strwrap(tweets[[320]]$text, width=55)
+
+#text cleaning
+library(tm)
+library(twitteR)
+df<-twListToDF(tweets) #converts list from single twitteR class (status, user, directmessage)
+#and retruns data.frame. Rows=objects in list, columns=fields of class
+myCorpus<- Corpus(VectorSource(df$text)) #build a corpus (large collection of texts)
+myCorpus<- tm_map(myCorpus, tolower) #converts to lowercase
+myCorpus<- tm_map(myCorpus, removePunctuation) #removes punctuation
+myCorpus<- tm_map(myCorpus, removeNumbers) #removes numbers
+removeURL<- function(x) gsub("http[[:alnum:]]*","",x) #selects URLs
+myCorpus<- tm_map(myCorpus, removeURL) #removes posts with URLs
+myStopwords<- setdiff(stopwords("english"), c("r","big")) #remove "r" and "big" from stop words
+myCorpus<- tm_map(myCorpus, removeWords, myStopwords) #removes stop words
+
+#stemming
+myCorpusCopy<- myCorpus #makes copy
+myCorpus<- tm_map(myCorpus, stemDocument) #stem words: groups categories of words
+#(ex) mining, mined, miner, become mine
+myCorpus<- tm_map(myCorpus, stemCompletion, dictionary=myCorpusCopy) #stem completion
+myCorpus<- tm_map(myCorpus, gsub, pattern="miners", replacement="mining")
+#replace "miners" with "mining" because "mining" was first stemmed to "mine" and then completed to "miners"
+strwrap(myCorpus[320], width=55)
